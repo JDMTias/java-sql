@@ -171,7 +171,7 @@ the number of orders in descending order. _Jose Pavarotti_ should be at the top 
 ```SQL
 SELECT COUNT(o.customer_id), c.contact_name
 FROM customers c JOIN orders o on c.customer_id = o.customer_id
-GROUP BY c.contact_name ORDER BY o.customer_id DESC
+GROUP BY c.contact_name, o.customer_id ORDER BY COUNT DESC
 
 ```
 
@@ -258,9 +258,9 @@ Table Name:
 ```SQL
 DELETE
 FROM customers
-WHERE customer_id IN(SELECT customer.customer_id
+WHERE customer_id IN(SELECT customers.customer_id
                     FROM customers LEFT JOIN orders ON orders.customer_id = customers.customer_id
-                    GROUP BY customer.customer_id
+                    GROUP BY customers.customer_id
                     HAVING COUNT(order_id)=0)
 ```
 
@@ -276,6 +276,7 @@ WHERE customer_id IN(SELECT customer.customer_id
 * constraints
   * the `id` should be the primary key for the table.
   * account `name` should be unique.
+  
   * account `budget` is required.
 
 ```SQL
