@@ -37,7 +37,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
-
+SELECT city
+FROM customers
+WHERE city in ('London')
 ```
 
 * [ ] ***find all customers with postal code 1010. Returns 3 customers***
@@ -48,6 +50,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
+SELECT postal_code
+FROM customers
+WHERE postal_code = '1010'
 
 ```
 
@@ -59,7 +64,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
-
+SELECT phone
+FROM suppliers
+WHERE supplier_id = '11'
 ```
 
 * [ ] ***list orders descending by the order date. The order with date 1998-05-06 should be at the top***
@@ -70,6 +77,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
+SELECT order_date
+FROM orders
+ORDER BY order_date DESC
 
 ```
 
@@ -82,7 +92,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
-
+SELECT company_name
+FROM suppliers
+WHERE length(company_name) > 20
 ```
 
 * [ ] ***find all customers that include the word 'MARKET' in the contact title. Should return 19 records***
@@ -95,7 +107,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
-
+SELECT *
+FROM customers
+WHERE upper(contact_title) LIKE '%MARKET%'
 ```
 
 * [ ] ***add a customer record for***
@@ -112,6 +126,10 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
+INSERT INTO customers(customer_id, company_name, contact_name, address, city, postal_code, 
+                        country)
+VALUES ('SHIRE', 'The Shire', 'Bilbo Baggins', '1 Hobbit-Hole', 'Bag End', '111', 'Middle Earth')
+
 
 ```
 
@@ -123,7 +141,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
-
+UPDATE customers
+SET postal_code = '11122'
+WHERE postal_code = '111'
 ```
 
 * [ ] ***list orders grouped and ordered by customer company name showing the number of orders per customer company name. _Rattlesnake Canyon Grocery_ should have 18 orders***
@@ -135,10 +155,13 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
-
+SELECT COUNT(o.order_id), c.company_name
+FROM orders o JOIN customers c ON o.customer_id = c.customer_id
+GROUP BY c.company_name
 ```
 
-* [ ] ***list customers by contact name and the number of orders per contact name. Sort the list by the number of orders in descending order. _Jose Pavarotti_ should be at the top with 31 orders followed by _Roland Mendal_ with 30 orders. Last should be _Francisco Chang_ with 1 order***
+* [ ] ***list customers by contact name and the number of orders per contact name. Sort the list by 
+the number of orders in descending order. _Jose Pavarotti_ should be at the top with 31 orders followed by _Roland Mendal_ with 30 orders. Last should be _Francisco Chang_ with 1 order***
 
   <details><summary>hint</summary>
 
@@ -146,6 +169,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
+SELECT COUNT(o.customer_id), c.contact_name
+FROM customers c JOIN orders o on c.customer_id = o.customer_id
+GROUP BY c.contact_name ORDER BY o.customer_id DESC
 
 ```
 
@@ -157,7 +183,9 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
   </details>
 
 ```SQL
-
+SELECT COUNT(o.order_id), c.city
+FROM customers c JOIN orders o ON c.city = o.ship_city
+GROUP BY c.city ORDER BY c.city
 ```
 
 ## Data Normalization
@@ -177,29 +205,25 @@ Below are some empty tables to be used to normalize the database
 * Not all of the cells will contain data in the final solution
 * Feel free to edit these tables as necessary
 
-Table Name:
+Table Name:Pet Owners
+| Person Id | Name | City | Yard |
+| --------- | ---- | ---- | ---- |
+| 1         | Jane | Yes  | No   |
+| 2         | Bob  | No   | No   |
+| 3         | Sam  | No   | Yes  |
 
-|            |            |            |            |            |            |            |            |            |
-|------------|------------|------------|------------|------------|------------|------------|------------|------------|
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
 
-Table Name:
+Table Name: Pets
+| Pet Id | Owner Id | Name       | Type   |     
+| ------ | -------- | ---------- | ------ |
+| 1      | 1        | Ellie      | Dog    |     
+| 2      | 1        | Tiger      | Cat    |     
+| 3      | 1        | Toby       | Turtle |     
+| 4      | 2        | Joe        | Horse  |     
+| 5      | 3        | Ginger     | Dog    |     
+| 6      | 3        | Miss Kitty | Cat    |     
+| 7      | 3        | Bubble     | Fish   |     
 
-|            |            |            |            |            |            |            |            |            |
-|------------|------------|------------|------------|------------|------------|------------|------------|------------|
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
-|            |            |            |            |            |            |            |            |            |
 
 Table Name:
 
@@ -232,7 +256,12 @@ Table Name:
 * [ ] ***delete all customers that have no orders. Should delete 2 (or 3 if you haven't deleted the record added) records***
 
 ```SQL
-
+DELETE
+FROM customers
+WHERE customer_id IN(SELECT customer.customer_id
+                    FROM customers LEFT JOIN orders ON orders.customer_id = customers.customer_id
+                    GROUP BY customer.customer_id
+                    HAVING COUNT(order_id)=0)
 ```
 
 * [ ] ***Create Database and Table: After creating the database, tables, columns, and constraint, generate the script necessary to recreate the database. This script is what you will submit for review***
